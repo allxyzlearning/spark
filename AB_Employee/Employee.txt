@@ -1,0 +1,7 @@
+1 Ajay Programmer 20000
+2 Poonam Data_Scientest 40000
+3 Komal Programmer 30000
+4 Kinjal Bussiness_Analyst 70000
+5 Chintan Team_Lead 60000
+6 Palak Tester 30000
+7 Meshwa Programmer 20000

@@ -1,0 +1,6 @@
+hi friends
+this is a pyspark programe
+this is sortkut
+hi a a a a a a
+hello world
+this is a word count programe

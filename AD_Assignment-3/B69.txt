@@ -1,0 +1,310 @@
+PySpark with Hadoop Practical Assignment 3
+Name:Raj shukla
+Roll No.:B69
+
+
+------------------{ Question 1 }-------------------
+
+========={ Q-1(1) Count the total number of Employees. }=======
+
+>>> hdfsfile = sc.textFile("/home/lenovo/Desktop/DS2/Spark&PySparkProgram/AD_Assignment-3/Q-1/employee_department.txt")
+>>> data = hdfsfile.map(lambda line: line.split("\t"))
+>>> data.collect()
+
+[['1', 'Nisha', 'HR', '40', '20-Jan-20', 'F', '25000'], ['2', 'Kirtan', 'Admin', '30', '02-Sep-15', 'M', '40000'], ['3', 'Kosha', 'IT', '50', '25-Mar-12', 'F', '50000'], ['4', 'Mishti', 'HR', '20', '23-Feb-15', 'F', '10000'], ['5', 'Chirag', 'Admin', '40', '12-Aug-11', 'M', '40000'], ['6', 'Yashesh', 'IT', '28', '05-Jun-16', 'M', '24000'], ['7', 'Bela', 'Finance', '27', '19-Jun-14', 'F', '11000'], ['8', 'Kena', 'Finance', '25', '23-Sep-13', 'F', '60000']]
+>>> 
+>>> data.count()
+8
+
+
+
+========={ Q-1(2) Count the females working in HR department. }=======
+
+>>> FemaleHR = data.filter(lambda value: 'HR' in value[2] and 'F' in value[5])
+>>> FemaleHR.collect()
+
+[['1', 'Nisha', 'HR', '40', '20-Jan-20', 'F', '25000'], ['4', 'Mishti', 'HR', '20', '23-Feb-15', 'F', '10000']]
+>>> 
+>>> FemaleHR.count()
+2
+
+
+
+========={ Q-1(3) Count the females whose date of join is in current year. }=======
+
+>>> FemaleEmployee = data.filter(lambda value: 'F' in value[5])
+>>> FemaleEmployee.collect()
+
+[['1', 'Nisha', 'HR', '40', '20-Jan-20', 'F', '25000'], ['3', 'Kosha', 'IT', '50', '25-Mar-12', 'F', '50000'], ['4', 'Mishti', 'HR', '20', '23-Feb-15', 'F', '10000'], ['7', 'Bela', 'Finance', '27', '19-Jun-14', 'F', '11000'], ['8', 'Kena', 'Finance', '25', '23-Sep-13', 'F', '60000']]
+>>> 
+>>> FemaleEmployee.count()
+5
+
+
+
+========={ Q-1(4) Count the males working in Admin and IT department. }=======
+
+>>> AdminIT = data.filter(lambda value: 'Admin' in value[2] or 'IT' in value[2])
+>>> AdminIT.collect()
+
+[['2', 'Kirtan', 'Admin', '30', '02-Sep-15', 'M', '40000'], ['3', 'Kosha', 'IT', '50', '25-Mar-12', 'F', '50000'], ['5', 'Chirag', 'Admin', '40', '12-Aug-11', 'M', '40000'], ['6', 'Yashesh', 'IT', '28', '05-Jun-16', 'M', '24000']]
+
+>>> MalesAdminIT = data.filter(lambda value: 'M' in value[5])
+>>> MalesAdminIT.collect()
+
+[['2', 'Kirtan', 'Admin', '30', '02-Sep-15', 'M', '40000'], ['5', 'Chirag', 'Admin', '40', '12-Aug-11', 'M', '40000'], ['6', 'Yashesh', 'IT', '28', '05-Jun-16', 'M', '24000']]
+>>> 
+>>> MalesAdminIT.count()
+3
+
+
+
+========={ Q-1(5) Count the males whose age is more than 25 and working in Admin department. }=======
+
+>>> MalesAdmin = data.filter(lambda value: 'Admin' in value[2] and 'M' in value[5])
+>>> MalesAdmin.collect()
+
+[['2', 'Kirtan', 'Admin', '30', '02-Sep-15', 'M', '40000'], ['5', 'Chirag', 'Admin', '40', '12-Aug-11', 'M', '40000']]
+>>>
+>>> Age = MalesAdmin.map(lambda age:[age[i] for i in [3]])
+>>> Age.collect()
+[['30'], ['40']]
+>>>
+>>> More_Age = Age.flatMap(lambda age:age)
+>>> More_Age.collect()
+['30', '40']
+>>>
+>>> More_Age = More_Age.map(lambda age: int(age))
+>>> More_Age.collect()
+[30, 40]
+>>>
+>>> More_Age = More_Age.filter(lambda value: value>25)
+>>> More_Age.collect()
+[30, 40]
+>>> 
+>>> More_Age.count()
+2
+
+
+
+========={ Q-1(6) Display the Employee name with minimum salary. }=======
+
+>>> NameSalary = data.map(lambda value: [value[1],value[6]])
+>>> NameSalary.collect()
+
+[['Nisha', '25000'], ['Kirtan', '40000'], ['Kosha', '50000'], ['Mishti', '10000'], ['Chirag', '40000'], ['Yashesh', '24000'], ['Bela', '11000'], ['Kena', '60000']]
+>>>
+>>> NameSalary.min(lambda value: value[1])
+['Mishti', '10000']
+
+
+
+========={ Q-1(7) Display the Employee name with maximum salary. }=======
+
+>>> NameSalary.max(lambda value: value[1])
+['Kena', '60000']
+
+
+
+
+
+
+------------------{ Question 2 }-------------------
+
+========={ Q-2(1) Count the total number of Males and Females. }=======
+
+>>> hdfsfile = sc.textFile("/home/lenovo/Desktop/DS2/Spark&PySparkProgram/AD_Assignment-3/Q-2/Person.txt")      
+>>> data = hdfsfile.map(lambda line: line.split(" "))
+>>> data.collect()
+
+[['Alka', 'F', '35'], ['Palak', 'F', '40'], ['Nikita', 'F', '25'], ['Ankush', 'M', '15'], ['Paritosh', 'M', '50'], ['Jay', 'M', '28'], ['Bharti', 'F', '35'], ['Nimisha', 'F', '30'], ['Bharat', 'M', '23'], ['Nishant', 'M', '32']]
+>>> 
+>>> MaleData = data.filter(lambda value: (value[1] == 'M'))
+>>> MaleData.collect()
+[['Ankush', 'M', '15'], ['Paritosh', 'M', '50'], ['Jay', 'M', '28'], ['Bharat', 'M', '23'], ['Nishant', 'M', '32']]
+>>> 
+>>> MaleData.count()
+5
+>>> 
+>>> 
+>>> FemaleData = data.filter(lambda value: (value[1] == 'F'))
+>>> FemaleData.collect()
+[['Alka', 'F', '35'], ['Palak', 'F', '40'], ['Nikita', 'F', '25'], ['Bharti', 'F', '35'], ['Nimisha', 'F', '30']]
+>>> 
+>>> FemaleData.count()
+5
+
+
+
+========={ Q-2(2) Find the females having age more than 30 years. }=======
+
+>>> FemaleAge = data.filter(lambda value: (value[1] == 'F' and value[2] > '30'))
+>>> FemaleAge.collect()
+[['Alka', 'F', '35'], ['Palak', 'F', '40'], ['Bharti', 'F', '35']]
+
+
+
+========={ Q-2(3) Find the males whose age is 50 years. }=======
+
+>>> MaleAge = data.filter(lambda value: (value[1] == 'M' and value[2] == '50'))
+>>> MaleAge.collect()
+[['Paritosh', 'M', '50']]
+
+
+
+========={ Q-2(4) Find the person with minimum and maximum age. }=======
+
+>>> data.max(lambda value: value[2])
+['Paritosh', 'M', '50']
+>>> 
+>>> data.min(lambda value: value[2])
+['Ankush', 'M', '15']
+
+
+
+
+
+
+------------------{ Question 3 }-------------------
+
+========={ Q-3(1) Find the total count of chess players. }=======
+
+>>> hdfsfile = sc.textFile("/home/lenovo/Desktop/DS2/Spark&PySparkProgram/AD_Assignment-3/Q-3/topwomen_chessplayers.csv")
+>>> data = hdfsfile.map(lambda line: line.split(","))
+>>> data.collect()
+>>>
+>>> data.count()
+8553
+
+
+
+========={ Q-3(2) Find the names of the chess players belonging to India. }=======
+
+>>> IndianChessPlayer = data.filter(lambda value: 'IND' == value[3])
+>>> IndianChessPlayer.collect()
+>>> 
+>>> IndianPlayerName = IndianChessPlayer.map(lambda value: [value[1],value[2]])
+>>> IndianPlayerName.collect()
+
+[['"Koneru', ' Humpy"'], ['"Harika', ' Dronavalli"'], ['Vaishali', 'R'], ['"Tania', ' Sachdev"'], ['Kulkarni', 'Bhakti'], ['"Padmini', ' Rout"'], ['"Nandhidhaa', ' P V"'], ['"Gomes', ' Mary Ann"'], ['"Soumya', ' Swaminathan"'], ['"Karavade', ' Eesha"'], ['"Vijayalakshmi', ' Subbaraman"'], ['"Pratyusha', ' Bodda"'], ['Divya', 'Deshmukh'], ['Vantika', 'Agrawal'], ['Sharma', 'Isha'], ['Priyanka', 'Nutakki'], ['Mrudul', 'Dehankar'], ['"Mahalakshmi', ' M"'], ['"Pujari', ' Rucha"'], ['"Parnali', ' S Dharia"'], ['"Vinuthna', ' N."'], ['"Cholleti', ' Sahajasri"'], ['"Varshini', ' V"'], ..............
+
+
+
+========={ Q-3(3) Find the names of the Indian chess players who are born in 1995. }=======
+
+>>> IndianPlayerBorn1995 = data.filter(lambda value: ('IND' == value[3] and '1995' == value[5]))
+>>> IndianPlayerBorn1995.collect()
+
+[['5031931', '"Saranya', ' J"', 'IND', 'F', '1995', 'WFM', '2045', '2052', '2115', '', '', ''], ['5029422', '"Veena', ' Mounica M."', 'IND', 'F', '1995', '2044', 'wi', '', '', '', '', ''], ['5029040', '"Priyanka', ' Kumari"', 'IND', 'F', '1995', '1910', '1958', '1944', '', '', '', ''], ['5088313', 'Hinduja', 'Reddy', 'IND', 'F', '1995', '1881', '1962', '', '', '', ''], ['5039673', 'Vaishnavi', 'J', 'IND', 'F', '1995', '1849', '', '', '', '', ''], ['5048958', '"Arunima', ' Kalra"', 'IND', 'F', '1995', '1846', 'wi', '', '', '', '', ''], ['5067421', '"Vanessa', ' D`souza"', 'IND', 'F', '1995', '1833', 'wi', '', '', '', '', ''], ['5025532', '"Tejaswini', ' Reddy S."', 'IND', 'F', '1995', '1832', 'wi', '', '', '', '', ''], ['5046424', '"Anjana Krishna', ' S"', 'IND', 'F', '1995', '1827', '1947', '1895', 'wi', '', '', '']]
+>>> 
+>>> 
+>>> IndianPlayerName = IndianPlayerBorn1995.map(lambda value: [value[1],value[2]])
+>>> IndianPlayerName.collect()
+
+[['"Saranya', ' J"'], ['"Veena', ' Mounica M."'], ['"Priyanka', ' Kumari"'], ['Hinduja', 'Reddy'], ['Vaishnavi', 'J'], ['"Arunima', ' Kalra"'], ['"Vanessa', ' D`souza"'], ['"Tejaswini', ' Reddy S."'], ['"Anjana Krishna', ' S"']]
+
+
+
+========={ Q-3(4) Display the names of Russian chess players whose rapid rating and Blitz rating both is more than 2500. }=======
+
+>>> RussianPlayer = data.filter(lambda value: ('RUS' == value[3] and value[8] > '2500' and value[9] >'2500'))
+>>> RussianPlayer.collect()
+
+[['14109336', '"Lagno', ' Kateryna"', 'RUS', 'F', '1989', 'GM', '2546', '2521', '2608', '', '', ''], ['4134974', '"Kosintseva', ' Nadezhda"', 'RUS', 'F', '1985', 'GM', '2483', '2516', '2519', 'wi', '', ''], ['4128125', '"Kosteniuk', ' Alexandra"', 'RUS', 'F', '1984', 'GM', '2471', '2517', '2521', '', '', '']]
+>>> 
+>>> RussianPlayerName = RussianPlayer.map(lambda value: [value[1],value[2]])
+>>> RussianPlayerName.collect()
+
+[['"Lagno', ' Kateryna"'], ['"Kosintseva', ' Nadezhda"'], ['"Kosteniuk', ' Alexandra"']]
+
+
+
+========={ Q-3(5) List all the China players whose title is ‘GM’. }=======
+
+>>> ChinaPlayer = data.filter(lambda value: ('CHN' == value[3] and 'GM' == value[6]))
+>>> ChinaPlayer.collect()
+
+[['8602980', '"Hou', ' Yifan"', 'CHN', 'F', '1994', 'GM', '2658', '2621', '2601', '', '', ''], ['8600147', '"Xie', ' Jun"', 'CHN', 'F', '1970', 'GM', '2574', 'wi', '', '', '', ''], ['8603006', '"Ju', ' Wenjun"', 'CHN', 'F', '1991', 'GM', '2560', '2610', '2536', '', '', ''], ['8603642', '"Tan', ' Zhongyi"', 'CHN', 'F', '1991', 'GM', '2510', '2501', '2510', '', '', ''], ['8605114', '"Lei', ' Tingjie"', 'CHN', 'F', '1997', 'GM', '2505', '2527', '2530', '', '', ''], ['8601283', '"Zhao', ' Xue"', 'CHN', 'F', '1985', 'GM', '2486', '2442', '2407', '', '', ''], ['8600635', '"Xu', ' Yuhua"', 'CHN', 'F', '1976', 'GM', '2465', 'wi', '', '', '', '']]
+
+
+
+
+
+
+------------------{ Question 4 }-------------------
+
+========={ Q-4(1) List the top 5 countries having maximum happiness score. }=======
+
+>>> hdfsfile = sc.textFile("/home/lenovo/Desktop/DS2/Spark&PySparkProgram/AD_Assignment-3/Q-4/World_happiness_data_2019.csv")
+>>> data = hdfsfile.map(lambda line: line.split(","))
+>>> data.collect()
+
+[['Overall rank', 'Country or region', 'Happiness Score', 'GDP per capita', 'Social support', 'Healthy life expectancy', 'Freedom to make life choices', 'Generosity', 'Perceptions of corruption'], ['1', 'Finland', '7.769', '1.34', '1.587', '0.986', '0.596', '0.153', '0.393'], ['2', 'Denmark', '7.6', '1.383', '1.573', '0.996', '0.592', '0.252', '0.41'], ['3', 'Norway', '7.554', '1.488', '1.582', '1.028', '0.603', '0.271', '0.341'], ['4', 'Iceland', '7.494', '1.38', '1.624', '1.026', '0.591', '0.354', '0.118'], ['5', 'Netherlands', '7.488', '1.396', '1.522', '0.999', '0.557', '0.322', '0.298'], ['6', 'Switzerland', '7.48', '1.452', '1.526', '1.052', '0.572', '0.263', '0.343'], ['7', 'Sweden', '7.343', '1.387', '1.487', '1.009', '0.574', '0.267', '0.373'], ['8', 'New Zealand', '7.307', '1.303', '1.557', '1.026', '0.585', '0.33', '0.38'],..............
+
+>>> CountryAndScore = data.map(lambda value: [value[1],value[2]])
+>>> CountryAndScore.collect()
+
+[['Country or region', 'Happiness Score'], ['Finland', '7.769'], ['Denmark', '7.6'], ['Norway', '7.554'], ['Iceland', '7.494'], ['Netherlands', '7.488'], ['Switzerland', '7.48'], ['Sweden', '7.343'], ['New Zealand', '7.307'], ['Canada', '7.278'], ['Austria', '7.246'], ['Australia', '7.228'], ['Costa Rica', '7.167'], ['Israel', '7.139'], ['Luxembourg', '7.09'], ['United Kingdom', '7.054'], ['Ireland', '7.021'], ['Germany', '6.985'], ['Belgium', '6.923'],..................	
+
+>>> ListOfTop5 = CountryAndScore.top(6,key = lambda value: value[1])
+>>> print(ListOfTop5)
+
+[['Country or region', 'Happiness Score'], ['Finland', '7.769'], ['Denmark', '7.6'], ['Norway', '7.554'], ['Iceland', '7.494'], ['Netherlands', '7.488']]
+
+
+
+
+========={ Q-4(2) List the country name having minimum health life expectancy. }=======
+
+>>> CountryAndHealthyLife = data.map(lambda value: [value[1],value[5]])
+>>> CountryAndHealthyLife.collect()
+
+[['Country or region', 'Healthy life expectancy'], ['Finland', '0.986'], ['Denmark', '0.996'], ['Norway', '1.028'], ['Iceland', '1.026'], ['Netherlands', '0.999'], ['Switzerland', '1.052'], ['Sweden', '1.009'], ['New Zealand', '1.026'], ['Canada', '1.039'], ['Austria', '1.016'], ['Australia', '1.036'], ['Costa Rica', '0.963'], ['Israel', '1.029'], ['Luxembourg', '1.012'], ['United Kingdom', '0.996'], ['Ireland', '0.999'], ['Germany', '0.987'], ['Belgium', '0.986'], ['United States', '0.874'], ['Czech Republic', '0.92'], ['United Arab Emirates', '0.825'], ['Malta', '0.999'],....................
+
+>>> 
+>>> CountryAndHealthyLife.min(lambda value: value[1])
+['Swaziland', '0']
+
+
+
+========={ Q-4(3) List the country name having the maximum generosity level. }=======
+
+>>> CountryAndGenerosity = data.map(lambda value: [value[1],value[7]])
+>>> CountryAndGenerosity.collect()
+
+[['Country or region', 'Generosity'], ['Finland', '0.153'], ['Denmark', '0.252'], ['Norway', '0.271'], ['Iceland', '0.354'], ['Netherlands', '0.322'], ['Switzerland', '0.263'], ['Sweden', '0.267'], ['New Zealand', '0.33'], ['Canada', '0.285'], ['Austria', '0.244'], ['Australia', '0.332'], ['Costa Rica', '0.144'], ['Israel', '0.261'], ['Luxembourg', '0.194'], ['United Kingdom', '0.348'], ['Ireland', '0.298'], ['Germany', '0.261'], ['Belgium', '0.16'], ['United States', '0.28'], ['Czech Republic', '0.046'], ['United Arab Emirates', '0.262'], ['Malta', '0.375'], ['Mexico', '0.074'], ['France', '0.111'], ['Taiwan', '0.242'], ['Chile', '0.187'], ['Guatemala', '0.175'], ['Saudi Arabia', '0.08'], ['Qatar', '0.22'],...............
+>>> 
+>>> CountryAndGenerosity.top(2,key = lambda value: value[1])
+
+[['Country or region', 'Generosity'], ['Myanmar', '0.566']]
+
+
+
+
+========={ Q-4(4) List the country names having social support more than 1.5 and Freedom to make life choices less than 0.5. }=======
+
+>>> CountrySocialFreedom = data.map(lambda value: [value[1],value[4],value[6]])
+>>> CountrySocialFreedom.collect()
+
+[['Country or region', 'Social support', 'Freedom to make life choices'], ['Finland', '1.587', '0.596'], ['Denmark', '1.573', '0.592'], ['Norway', '1.582', '0.603'], ['Iceland', '1.624', '0.591'], ['Netherlands', '1.522', '0.557'], ['Switzerland', '1.526', '0.572'], ['Sweden', '1.487', '0.574'], ['New Zealand', '1.557', '0.585'], ['Canada', '1.505', '0.584'], ['Austria', '1.475', '0.532'], ['Australia', '1.548', '0.557'], ['Costa Rica', '1.441', '0.558'], ['Israel', '1.455', '0.371'], ['Luxembourg', '1.479', '0.526'], ['United Kingdom', '1.538', '0.45'], ['Ireland', '1.553', '0.516'], ['Germany', '1.454', '0.495'], ['Belgium', '1.504', '0.473'], ['United States', '1.457', '0.454'], ['Czech Republic', '1.487', '0.457'], ['United Arab Emirates', '1.31', '0.598'], ['Malta', '1.52', '0.564'], ['Mexico', '1.323', '0.433'],.............
+
+>>> AA = CountrySocialFreedom.filter(lambda value: (value[1] > '1.5' and value[2] < '0.5'))
+>>> AA.collect()
+
+[['United Kingdom', '1.538', '0.45'], ['Belgium', '1.504', '0.473'], ['Slovakia', '1.504', '0.334'], ['Lithuania', '1.515', '0.291'], ['Estonia', '1.528', '0.495'], ['Kazakhstan', '1.508', '0.41'], ['Mongolia', '1.531', '0.317'], ['Turkmenistan', '1.538', '0.394'], ['Bulgaria', '1.513', '0.311']]
+
+
+
+
+========={ Q-4(5) List the country names having maximum and minimum GDP per capita. }=======
+
+>>> CountryGDP.top(2,key = lambda value: value[1])
+
+[['Country or region', 'GDP per capita'], ['Qatar', '1.684']]
+>>> 
+>>> CountryGDP.min(lambda value: value[1])
+['Somalia', '0']
+
+
+
+

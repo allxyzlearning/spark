@@ -1,0 +1,8 @@
+1	Nisha	HR	40	20-Jan-20	F	25000
+2	Kirtan	Admin	30	02-Sep-15	M	40000
+3	Kosha	IT	50	25-Mar-12	F	50000
+4	Mishti	HR	20	23-Feb-15	F	10000
+5	Chirag	Admin	40	12-Aug-11	M	40000
+6	Yashesh	IT	28	05-Jun-16	M	24000
+7	Bela	Finance	27	19-Jun-14	F	11000
+8	Kena	Finance	25	23-Sep-13	F	60000
