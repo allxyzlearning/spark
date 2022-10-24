@@ -1,5 +1,1 @@
-hello hi
-how are you all
-hi welcome to the
-datascience practicals
-session
+this file change from allxyzlearning ok.
